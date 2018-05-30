@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: "reservation-client"
+  sleuth:
+    sampler:
+      probability: 1.0
+  zipkin:
+    enabled: true
+    base-url: "http://localhost:9411/"
+    discovery-client-enabled: true
+    locator:
+      discovery:
+        enabled: true
+    service:
+      name: "reservation-client"
+  security:
+    oauth2:
+      client:
+        registration:
+          login-client:
+            provider: "local-auth"
+            client-id: "client-1234"
+            client-secret: "secret"
+            client-authentication-method: "basic"
+            authorization-grant-type: "authorization_code"
+            scope: "profile"
+            redirect-uri-template: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-name: "Login Client"
+        provider:
+          local-auth:
+            authorization-uri: "http://auth-service:9191/oauth/authorize"
+            token-uri: "http://auth-service:9191/oauth/token"
+            user-info-uri: "http://auth-service:9191/resources/userinfo"
+            user-name-attribute: "name"
+
+server:
+  port: 8001
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "hystrix.stream"
